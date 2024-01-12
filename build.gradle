@@ -1,0 +1,110 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.1'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
+}
+
+group = 'io.gitcoins'
+version = '0.0.1'
+
+java {
+	sourceCompatibility = '17'
+	withJavadocJar()
+	withSourcesJar()
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId = 'springboot'
+			from components.java
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
+			}
+			pom {
+				name = 'My Library'
+				description = 'A concise description of my library'
+				url = 'http://www.example.com/library'
+				properties = [
+						myProp: "value",
+						"prop.with.dots": "anotherValue"
+				]
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+				developers {
+					developer {
+						id = 'johnd'
+						name = 'John Doe'
+						email = 'john.doe@example.com'
+					}
+				}
+				scm {
+					connection = 'scm:git:git://example.com/my-library.git'
+					developerConnection = 'scm:git:ssh://example.com/my-library.git'
+					url = 'http://example.com/my-library/'
+				}
+			}
+		}
+	}
+	repositories {
+		def username = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ""
+		def password = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ""
+		println "username: ${username}"
+		println "password: ${password}"
+		maven {
+			credentials {
+				username
+				password
+			}
+			// change URLs to point to your repos, e.g. http://my.org/repo
+			def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+			def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+			url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+		}
+	}
+}
+
+signing {
+
+	//signing.useGpgCmd()
+	def signingKey = project.hasProperty('signingKey')? project.signingKey : ""
+	def signingPassword = project.hasProperty('signingPassword')? project.signingPassword : ""
+	println "signingKey: ${signingKey}"
+	println "signingPassword: ${signingPassword}"
+	useInMemoryPgpKeys(signingKey, signingPassword)
+	sign publishing.publications.mavenJava
+
+}
+
+
+javadoc {
+	if(JavaVersion.current().isJava9Compatible()) {
+		options.addBooleanOption('html5', true)
+	}
+}
