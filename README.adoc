@@ -194,11 +194,9 @@ publishing {
 The configuration we use requires the following Gradle Properties to be set:
 
 * `signingKey` the pgp used to sign the artifacts.
-This project has a `test-private.pgp` key in it that you can use to try things out.
-Do not use it for your own artifacts because anyone could use it to impersonate you.
-* `signingPassword` the password for the `signingKey`.
-The password for `test-private.pgp` is `password`.
-Again, do not use this for real deployments.
+Generate gpg key with command `gpg --export-secret-keys --armor F207B5A1 > my.gpg`.
+`F207B5A1` is last 8 characters in the public key, you can get public key by `gpg --list-keys`
+* `signingPassword` the password for the `signingKey` and `my.gpg.pgp`.
 * `sonatypeUsername` the username from sonatype used to publish artifacts. This is the token username, not the one used for logging into the UI.
 * `sonatypePassword` the password from sonatype used to publish artifacts. This is the token password, not the one used for logging into the UI.
 
@@ -206,7 +204,7 @@ The following will provide all the Gradle Properties necessary for the commands 
 
 [source,java]
 ----
-export ORG_GRADLE_PROJECT_signingKey=`cat test-private.pgp`
+export ORG_GRADLE_PROJECT_signingKey=`cat my.gpg`
 export ORG_GRADLE_PROJECT_signingPassword=password
 export ORG_GRADLE_PROJECT_sonatypeUsername=<replace-with-your-token-username>
 export ORG_GRADLE_PROJECT_sonatypePassword=<replace-with-your-token-password>
@@ -283,7 +281,7 @@ To make publish automatic by action in github.
 Fist to add repository secrets:
 
 * `SIGNING_KEY` the pgp used to sign the artifacts.
-Generate gpg key with command `gpg --export-secret-keys --armor F207B5A1 > my.gpg`.
+Generate gpg key with command `gpg --export-secret-keys --armor F207B5A1 > my.gpg`. use `cat my.gpg` to output secret key in the console and copy the output as the vale of `SIGNING_KEY`.
 `F207B5A1` is last 8 characters in the public key, you can get public key by `gpg --list-keys`
 * `SIGNING_PASSWORD` the password for the `SIGNING_KEY`.
 * `OSSRH_TOKEN_USERNAME` the username from sonatype used to publish artifacts. This is the token username, not the one used for logging into the UI.
