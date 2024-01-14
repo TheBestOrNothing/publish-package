@@ -26,4 +26,4 @@ jobs:
       - name: Build
         run: ./gradlew signMavenPublication publishMavenPublicationToLocalRepository
       - name: Publish to NEXUS
-        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository --info

@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.gitcoins"
-version = "2.0"
+version = "2.3"
 
 // configure all java components to be published
 publishing {
