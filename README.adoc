@@ -279,6 +279,7 @@ NOTE: If you want to perform some additional checks before you release the repos
 == Publish by action
 
 To make publish automatic by action in github.
+
 Fist to add repository secrets:
 
 * `SIGNING_KEY` the pgp used to sign the artifacts.
@@ -323,4 +324,5 @@ jobs:
 ----
 
 Third to change and update the version variable in the build.gradle file. If you do not update version, there will be failed for releaseSonatypeStagingRepository, because version confilicate with the package have been released.
+
 So if you create a new tag like v1.0, the workflow will run and the package will publish to the remote repository.
