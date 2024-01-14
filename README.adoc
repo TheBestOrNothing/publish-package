@@ -279,7 +279,7 @@ NOTE: If you want to perform some additional checks before you release the repos
 == Publish by action
 
 To make publish automatic by action in github.
-1. Fist step to add repository secrets:
+Fist to add repository secrets:
 
 * `SIGNING_KEY` the pgp used to sign the artifacts.
 Generate gpg key with command `gpg --export-secret-keys --armor F207B5A1 > my.gpg`.
@@ -288,7 +288,7 @@ Generate gpg key with command `gpg --export-secret-keys --armor F207B5A1 > my.gp
 * `OSSRH_TOKEN_USERNAME` the username from sonatype used to publish artifacts. This is the token username, not the one used for logging into the UI.
 * `OSSRH_TOKEN_PASSWORD` the password from sonatype used to publish artifacts. This is the token password, not the one used for logging into the UI.
 
-2. To create publish script in the github action, please add the publish.yml file in the .github/workflows
+Second to create publish script in the github action, please add the publish.yml file in the .github/workflows
 
 ----
 name: Publish
@@ -322,5 +322,5 @@ jobs:
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
 ----
 
-3. Change and update the version variable in the build.gradle file. If you do not update version, there will be failed for releaseSonatypeStagingRepository, because version confilicate with the package have been released.
+Third to change and update the version variable in the build.gradle file. If you do not update version, there will be failed for releaseSonatypeStagingRepository, because version confilicate with the package have been released.
 So if you create a new tag like v1.0, the workflow will run and the package will publish to the remote repository.
