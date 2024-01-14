@@ -1,5 +1,11 @@
 name: Publish
 
+env:
+  ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_TOKEN_USERNAME }}
+  ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
+  ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
+  ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
+
 on:
   push:
     tags:
@@ -7,7 +13,7 @@ on:
 
 jobs:
   publish:
-    name: Release build and publish beta
+    name: Release build and publish
     runs-on: ubuntu-22.04
     steps:
       - name: Check out code
@@ -21,8 +27,3 @@ jobs:
         run: ./gradlew signMavenPublication publishMavenPublicationToLocalRepository
       - name: Publish to NEXUS
         run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
-        env:
-          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.OSSRH_TOKEN_USERNAME }}
-          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.OSSRH_TOKEN_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.SIGNING_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingKey: ${{ secrets.SIGNING_KEY }}
