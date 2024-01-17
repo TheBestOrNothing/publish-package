@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.gitcoins"
-version = "2.8"
+version = "2.9"
 
 // configure all java components to be published
 publishing {
@@ -82,7 +82,9 @@ nexusPublishing {
 		    nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
 		    snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
 		    packageGroup = "io.gitcoins"
-		    stagingProfileId = "638cedd9d39c2"
+		    stagingProfileId = System.getenv('SONATYPE_STAGING_PROFILE_ID')
+			username =  System.getenv('ORG_GRADLE_PROJECT_sonatypeUsername')
+			password =  System.getenv('ORG_GRADLE_PROJECT_sonatypePassword')
 		}
 	}
 
