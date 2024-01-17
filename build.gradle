@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.gitcoins"
-version = "2.11"
+version = "2.12"
 
 // configure all java components to be published
 publishing {
@@ -29,9 +29,23 @@ java {
 // After making the Gradle properties above available, you can try signing using
 // ./gradlew signMavenPublication
 //
-signing {
-
-	sign publishing.publications
+def hasSigningKey = project.hasProperty("signingKeyId") || project.hasProperty("signingKey")
+if(hasSigningKey) {
+	sign(project)
+}
+void sign(Project project) {
+	project.signing {
+		required { project.gradle.taskGraph.hasTask("publish") }
+		def signingKeyId = project.findProperty("signingKeyId")
+		def signingKey = project.findProperty("signingKey")
+		def signingPassword = project.findProperty("signingPassword")
+		if (signingKeyId) {
+			useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+		} else if (signingKey) {
+			useInMemoryPgpKeys(signingKey, signingPassword)
+		}
+		sign publishing.publications.maven
+	}
 }
 
 // customize the pom so it complies to Maven central requirements
