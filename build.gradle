@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.gitcoins"
-version = "2.4"
+version = "2.5"
 
 // configure all java components to be published
 publishing {
@@ -17,43 +17,24 @@ publishing {
 	}
 }
 
-// ossrh requires javadoc and sources https://central.sonatype.org/pages/requirements.html
 java {
 	withJavadocJar()
 	withSourcesJar()
 }
-
-// ossrh requries signing https://central.sonatype.org/pages/requirements.html
-// https://docs.gradle.org/current/userguide/signing_plugin.html
-// this only configures signing if the key is found
-// For signing you need to make signingKey and signingPassword available properties See https://docs.gradle.org/current/userguide/build_environment.html#sec:project_properties
+// For signing you need to make signingKey and signingPassword available properties
+// See https://docs.gradle.org/current/userguide/signing_plugin.html
 // The following makes the key available via the Gradle Property signingKey
 // export ORG_GRADLE_PROJECT_signingKey=`cat test-private.pgp`
 // export ORG_GRADLE_PROJECT_signingPassword="password"
 // After making the Gradle properties above available, you can try signing using
 // ./gradlew signMavenPublication
 //
-// NOTE: If you are using the legacy publishing you need to sign using the info at https://docs.gradle.org/current/userguide/signing_plugin.html#sec:signing_pom_files
-def hasSigningKey = project.hasProperty("signingKeyId") || project.hasProperty("signingKey")
-if(hasSigningKey) {
-	sign(project)
-}
-void sign(Project project) {
-	project.signing {
-		required { project.gradle.taskGraph.hasTask("publish") }
-		def signingKeyId = project.findProperty("signingKeyId")
-		def signingKey = project.findProperty("signingKey")
-		def signingPassword = project.findProperty("signingPassword")
-		if (signingKeyId) {
-			useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
-		} else if (signingKey) {
-			useInMemoryPgpKeys(signingKey, signingPassword)
-		}
-		sign publishing.publications.maven
-	}
+signing {
+	sign publishing.publications
 }
 
-// customize the pom so it complies to Maven central requirements https://central.sonatype.org/pages/requirements.html
+// customize the pom so it complies to Maven central requirements
+// https://central.sonatype.org/pages/requirements.html
 // https://docs.gradle.org/current/userguide/maven_plugin.html#sec:maven_pom_generation
 project.plugins.withType(MavenPublishPlugin).all {
 	PublishingExtension publishing = project.extensions.getByType(PublishingExtension)
@@ -84,12 +65,18 @@ project.plugins.withType(MavenPublishPlugin).all {
 	}
 }
 
+// The following makes the key available for publishing to Nexus
+// export ORG_GRADLE_PROJECT_sonatypeUsername=${token name}
+// export ORG_GRADLE_PROJECT_sonatypePassword=${token password}
+// After making the Gradle properties above available, you can try publish using
+// ./gradlew publishToSonatype
+// ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository
+
 nexusPublishing {
 	repositories {
 		//sonatype()
 		sonatype {
 		    nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-		    //nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"))
 		    snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
 		    packageGroup = "io.gitcoins"
 		    stagingProfileId = "638cedd9d39c2"
@@ -109,10 +96,6 @@ publishing {
 	repositories {
 		maven {
 			name = "local"
-			// change URLs to point to your repos, e.g. http://my.org/repo
-			//def releasesRepoUrl = "$buildDir/repos/releases"
-			//def snapshotsRepoUrl = "$buildDir/repos/snapshots"
-			//url = version.endsWith("SNAPSHOT") ? snapshotsRepoUrl : releasesRepoUrl
 
 			def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
 			def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
