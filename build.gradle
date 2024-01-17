@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.gitcoins"
-version = "2.10"
+version = "2.11"
 
 // configure all java components to be published
 publishing {
@@ -30,11 +30,7 @@ java {
 // ./gradlew signMavenPublication
 //
 signing {
-	def signingKey = System.getenv('ORG_GRADLE_PROJECT_signingKey')
-	def signingPassword = System.getenv('ORG_GRADLE_PROJECT_signingPassword')
-	if (signingKey) {
-		useInMemoryPgpKeys(signingKey, signingPassword)
-	}
+
 	sign publishing.publications
 }
 
